@@ -7,14 +7,16 @@ class AddClothing extends React.Component {
 
         this.state = {
             items: [],
-            text: ""
+            text: "",
+            initialItems: []
         };
 
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleAddItem = this.handleAddItem.bind(this);
         this.markItemCompleted = this.markItemCompleted.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
-        this.removeFromFirebase = this.removeFromFirebase.bind(this);
+        this.removeItem = this.removeItem.bind(this);
+        this.getStoredData = this.getStoredData.bind(this);
         this.category = "clothing";
     }
     handleTextChange(event) {
@@ -67,11 +69,45 @@ class AddClothing extends React.Component {
         this.setState({
             items: [].concat(updatedItems)
         });
-        const dbRef = firebase.database().ref(itemID);
-        dbRef.remove();
+        // const dbRef = firebase.database().ref(itemID);
+        // dbRef.remove();
     }
-    removeFromFirebase() {
 
+    removeItem(itemToRemove) {
+        const userName = this.props.userName;        
+        console.log(itemToRemove);
+        // const database = firebase.database().ref('users/' + userName + "/" + category );
+        // database.remove();
+    }
+    getAlert() {
+        alert('clicked');
+    }
+    getStoredData() {
+        const userName = this.props.userName;
+        const category = "clothing"
+        const dbRef = firebase.database().ref('users/' + userName + "/" + category);
+        console.log("getting data...");
+        if (this.props.userName) {
+            dbRef.on("value", (firebaseData) => {
+                const itemsArray = [];
+                const itemsData = firebaseData.val();
+
+                for (let itemKey in itemsData) {
+                    // itemsData[itemKey].key = itemKey// We're adding a key property, in addition to name and item
+                    itemsArray.push(itemsData[itemKey])
+                }
+
+                this.setState({
+                    initialItems: itemsArray
+                }, () => console.log(this.state.initialItems));
+            });
+            {
+                this.state.initialItems.map((item, i) => {
+                    console.log(this.state.initialItems[i]);
+                    // return <ClubItem data={item} key={item.key} remove={this.removeItem} />
+                })
+            }
+        }
     }
     render() {
         return (
@@ -79,16 +115,19 @@ class AddClothing extends React.Component {
                 <div className='inner-wrapper'>
 
                 <h3 className="item-category">Clothing</h3>
-                <div className="addedItems">
+                {/* <div className="addedItems">
                     <TodoList items={this.state.items} onItemCompleted={this.markItemCompleted} onDeleteItem={this.handleDeleteItem} />
 
-                </div>
+                </div> */}
+                <ul className="items">
+                    {this.state.initialItems.map((item, i) => {
+                            console.log(this.state.initialItems[i]);
+                            return <ClubItem data={this.state.initialItems[i]} key={this.state.initialItems[i]} remove={this.removeItem} />
+                    })}
+                </ul>
                 <form action="">
-
                     <input type="text" className="form-control" onChange={this.handleTextChange} value={this.state.text} />
-
                     <button className="btn btn-primary" onClick={this.handleAddItem} disabled={!this.state.text}>{"Add #" + (this.state.items.length + 1)}</button>
-
                 </form>
                 </div>
             </div>
@@ -96,53 +135,40 @@ class AddClothing extends React.Component {
     }
 }
 
-class TodoItem extends React.Component {
-    constructor(props) {
-        super(props);
-        this.markCompleted = this.markCompleted.bind(this);
-        this.deleteItem = this.deleteItem.bind(this);
-    }
-    markCompleted(event) {
-        this.props.onItemCompleted(this.props.id);
-    }
-    deleteItem(event) {
-        this.props.onDeleteItem(this.props.id);
-    }
-    // Highlight newly added item for several seconds.
-    componentDidMount() {
-        if (this._listItem) {
-            // 1. Add highlight class.
-            this._listItem.classList.add("highlight");
-
-            // 2. Set timeout.
-            setTimeout((listItem) => {
-                // 3. Remove highlight class.
-                listItem.classList.remove("highlight");
-            }, 500, this._listItem);
-        }
-    }
-    render() {
-        let itemClass = "form-check todoitem " + (this.props.completed ? "done" : "undone");
-        return (
-            <li className={itemClass} ref={li => this._listItem = li}>
-                <label className="form-check-label">
-                    <input type="checkbox" className="form-check-input" onChange={this.markCompleted} /> {this.props.text}
-                </label>
-                <button type="button" className="btn btn-danger btn-sm" onClick={() => {this.deleteItem(); this.removeFromFirebase()}}>x</button>
+export function ClubItem(props) {
+    // constructor(props) {
+    //     super(props);
+    // }
+    // render() {
+        return(
+            <li className="club-item">
+                {/* <label htmlFor="form-check-label" className="form-check-label"></label> */}
+                <input type="checkbox" className="form-check-input"/>
+                {props.data}
+                <button onClick={() => this.removeItem(props.data)}>Remove Item</button>
             </li>
-        );
+        )
+        // let itemClass = "form-check todoitem " + (this.props.completed ? "done" : "undone");
+        // return (
+        //     <li className={itemClass} ref={li => this._listItem = li}>
+        //         <label className="form-check-label">
+        //             <input type="checkbox" className="form-check-input" onChange={this.markCompleted} /> {this.props.text}
+        //         </label>
+        //         <button type="button" className="btn btn-danger btn-sm" onClick={() => {this.deleteItem(); this.removeFromFirebase()}}>x</button>
+        //     </li>
+        // );
     }
-}
+// }
 
-class TodoList extends React.Component {
-    render() {
-        return (
-            <ul className="todolist">
-                {this.props.items.map(item => (
-                    <TodoItem key={item.id} id={item.id} text={item.text} completed={item.done} onItemCompleted={this.props.onItemCompleted} onDeleteItem={this.props.onDeleteItem} />
-                ))}
-            </ul>
-        );
-    }
-}
+// class TodoList extends React.Component {
+//     render() {
+//         return (
+//             <ul className="items">
+//                 {this.state.items.map((item, i) => {
+//                     return <ClubItem data={item} key={item.key} remove={this.removeItem} />
+//                 })}
+//             </ul>
+//         );
+//     }
+// }
 export default AddClothing

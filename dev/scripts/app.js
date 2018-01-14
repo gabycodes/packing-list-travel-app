@@ -83,6 +83,7 @@ class App extends React.Component {
           this.setState({
             userName: this.removePeriod(this.state.email)
           })
+          this.child.getStoredData()
         })
     }
   }
@@ -94,6 +95,7 @@ class App extends React.Component {
         this.setState({
           userName: this.removePeriod(this.state.email)
         })
+        this.child.getStoredData()
       })
   }
 
@@ -134,7 +136,7 @@ class App extends React.Component {
         </nav>
 
         <Header />
-        <AddClothing userEmail={this.state.userEmail} userName={this.state.userName}/>
+        <AddClothing userEmail={this.state.userEmail} userName={this.state.userName} ref={instance => { this.child = instance; }}/>
         <AddShoes userEmail={this.state.userEmail} userName={this.state.userName}/>
         <AddToiletries userEmail={this.state.userEmail} userName={this.state.userName}/>
         <AddElectronics userEmail={this.state.userEmail} userName={this.state.userName}/>
