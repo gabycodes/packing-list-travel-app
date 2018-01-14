@@ -14,6 +14,8 @@ class AddClothing extends React.Component {
         this.handleAddItem = this.handleAddItem.bind(this);
         this.markItemCompleted = this.markItemCompleted.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
+        this.removeFromFirebase = this.removeFromFirebase.bind(this);
+        this.category = "clothing";
     }
     handleTextChange(event) {
         this.setState({
@@ -22,13 +24,22 @@ class AddClothing extends React.Component {
     }
     handleAddItem(event) {
         event.preventDefault();
-
         //issue an ID number using the date
         const newItem = {
             id: Date.now(),
             text: this.state.text,
             done: false
         };
+
+        // const dbRef = firebase.database().ref();
+        // dbRef.push({
+        //     userEmail: this.props.userEmail,
+        //     clothing: this.state.items
+        // });
+        const userName = this.props.userName;
+        const category = "clothing"
+        const database = firebase.database().ref('users/' + userName + "/" + category);
+        database.push(newItem.text);
 
         this.setState((prevState) => ({
             items: prevState.items.concat(newItem),
@@ -56,6 +67,11 @@ class AddClothing extends React.Component {
         this.setState({
             items: [].concat(updatedItems)
         });
+        const dbRef = firebase.database().ref(itemID);
+        dbRef.remove();
+    }
+    removeFromFirebase() {
+
     }
     render() {
         return (
@@ -112,7 +128,7 @@ class TodoItem extends React.Component {
                 <label className="form-check-label">
                     <input type="checkbox" className="form-check-input" onChange={this.markCompleted} /> {this.props.text}
                 </label>
-                <button type="button" className="btn btn-danger btn-sm" onClick={this.deleteItem}>x</button>
+                <button type="button" className="btn btn-danger btn-sm" onClick={() => {this.deleteItem(); this.removeFromFirebase()}}>x</button>
             </li>
         );
     }
