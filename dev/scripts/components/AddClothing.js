@@ -76,8 +76,8 @@ class AddClothing extends React.Component {
     removeItem(itemToRemove) {
         const userName = this.props.userName;        
         console.log(itemToRemove);
-        // const database = firebase.database().ref('users/' + userName + "/" + category );
-        // database.remove();
+        const database = firebase.database().ref('users/' + userName + "/" + category );
+        database.child(itemToRemove).remove();
     }
     getAlert() {
         alert('clicked');
@@ -121,7 +121,7 @@ class AddClothing extends React.Component {
                 </div> */}
                 <ul className="items">
                     {this.state.initialItems.map((item, i) => {
-                            console.log(this.state.initialItems[i]);
+                            console.log(this.state.initialItems);
                             return <ClubItem data={this.state.initialItems[i]} key={this.state.initialItems[i]} remove={this.removeItem} />
                     })}
                 </ul>
@@ -145,7 +145,7 @@ export function ClubItem(props) {
                 {/* <label htmlFor="form-check-label" className="form-check-label"></label> */}
                 <input type="checkbox" className="form-check-input"/>
                 {props.data}
-                <button onClick={() => this.removeItem(props.data)}>Remove Item</button>
+                <button onClick={() => this.props.removeItem(props.data)}>Remove Item</button>
             </li>
         )
         // let itemClass = "form-check todoitem " + (this.props.completed ? "done" : "undone");

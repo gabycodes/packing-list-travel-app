@@ -8,12 +8,12 @@ import AddMiscellaneous from './components/AddMiscellaneous';
 import Header from './components/Header'
 
 var config = {
-  apiKey: "AIzaSyB9g92lbFyfs_qNWhxog2Re3PPbaXN9W5A",
-  authDomain: "packinglist-4f592.firebaseapp.com",
-  databaseURL: "https://packinglist-4f592.firebaseio.com",
-  projectId: "packinglist-4f592",
-  storageBucket: "packinglist-4f592.appspot.com",
-  messagingSenderId: "495877381266"
+  apiKey: "AIzaSyCbxJdKcjXziruqH-BIGpSneqMW3OOF_fc",
+  authDomain: "travel-app-52d0d.firebaseapp.com",
+  databaseURL: "https://travel-app-52d0d.firebaseio.com",
+  projectId: "travel-app-52d0d",
+  storageBucket: "travel-app-52d0d.appspot.com",
+  messagingSenderId: "395512975538"
 };
 firebase.initializeApp(config);
 
